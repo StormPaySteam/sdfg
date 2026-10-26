@@ -17,7 +17,14 @@ function featureName(feature) {
 }
 
 async function fetchJson(url, label) {
-  const response = await fetch(url);
+  // GitHub raw URL заменяем на адрес raw.githubusercontent.com,
+// чтобы браузер мог загружать GeoJSON без ошибки CORS.
+url = url.replace(
+  /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/raw\/([^/]+)\/(.*)$/,
+  'https://raw.githubusercontent.com/$1/$2/$3/$4'
+);
+
+const response = await fetch(url);
   if (!response.ok) throw new Error(`${label}: HTTP ${response.status} при загрузке ${url}`);
   const text = await response.text();
   // GitHub LFS pointer files are plain text, not GeoJSON.
